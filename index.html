@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RODZINA</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #fff8f0;
-      color: #333;
       margin: 0;
       padding: 0;
+      background: #fff8f0;
+      color: #333;
+    }
+    #lockscreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #f4e1d2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 999;
+    }
+    #main-content {
+      display: none;
+    }
+    input {
+      padding: 0.5rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #d6b89c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
     header {
       background: #d6b89c;
@@ -52,96 +80,54 @@
     .person h3 {
       margin-top: 0;
     }
-    .login-section {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .input {
-      padding: 0.5rem;
-      margin: 0.25rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      background: #d6b89c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script>
-    // Twoje dane Firebase (zamień na własne przy użyciu Firebase Console)
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function loginUser() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          alert("Zalogowano!");
-        })
-        .catch(error => alert(error.message));
-    }
-
-    function signupUser() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          alert("Zarejestrowano!");
-        })
-        .catch(error => alert(error.message));
-    }
-  </script>
 </head>
 <body>
-  <header>RODZINA</header>
-  <nav>
-    <a href="#auleytner">Auleytner</a>
-    <a href="#sadurscy">Sadurscy</a>
-  </nav>
-  
-  <div class="container">
-    <div class="login-section">
-      <h3>Zaloguj się lub zarejestruj</h3>
-      <input class="input" id="email" type="email" placeholder="Email" />
-      <input class="input" id="password" type="password" placeholder="Hasło" />
-      <br>
-      <button onclick="loginUser()">Zaloguj</button>
-      <button onclick="signupUser()">Zarejestruj</button>
-    </div>
 
-    <section id="auleytner">
-      <h2>Rodzina Auleytner</h2>
-      <div class="person">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Jan_Sobieski_zwyciezca_pod_Wiedniem.jpg/800px-Jan_Sobieski_zwyciezca_pod_Wiedniem.jpg" alt="Jan Auleytner">
-        <h3>Jan Auleytner</h3>
-        <p>Urodzony w 1890 roku. Legenda rodu. Lubił pierogi i zbierał znaczki.</p>
-      </div>
-    </section>
-
-    <section id="sadurscy">
-      <h2>Rodzina Sadurscy</h2>
-      <div class="person">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Matejko-Batory_pod_Pskowem.jpg/800px-Matejko-Batory_pod_Pskowem.jpg" alt="Zofia Sadurska">
-        <h3>Zofia Sadurska</h3>
-        <p>Urodzona w 1902 roku. Prowadziła rodzinne kroniki. Mistrzyni naleśników.</p>
-      </div>
-    </section>
+  <div id="lockscreen">
+    <h2>Wprowadź hasło, aby uzyskać dostęp:</h2>
+    <input type="password" id="password" placeholder="Hasło..." />
+    <button onclick="checkPassword()">Wejdź</button>
+    <p id="error" style="color: red; display: none;">Nieprawidłowe hasło.</p>
   </div>
+
+  <div id="main-content">
+    <header>RODZINA</header>
+    <nav>
+      <a href="#auleytner">Auleytner</a>
+      <a href="#sadurscy">Sadurscy</a>
+    </nav>
+    <div class="container">
+      <section id="auleytner">
+        <h2>Rodzina Auleytner</h2>
+        <div class="person">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Jan_Sobieski_zwyciezca_pod_Wiedniem.jpg" />
+          <h3>Jan Auleytner</h3>
+          <p>Urodzony w 1890 roku. Legenda rodu. Lubił pierogi i zbierał znaczki.</p>
+        </div>
+      </section>
+      <section id="sadurscy">
+        <h2>Rodzina Sadurscy</h2>
+        <div class="person">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Matejko-Batory_pod_Pskowem.jpg" />
+          <h3>Zofia Sadurska</h3>
+          <p>Urodzona w 1902 roku. Prowadziła rodzinne kroniki. Mistrzyni naleśników.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      if (input === 'RodzinnaStrona2025') {
+        document.getElementById('lockscreen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>
+
