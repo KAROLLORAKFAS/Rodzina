@@ -3,151 +3,167 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rodzina2025</title>
+  <title>Rodzina</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans&display=swap">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f9f2e7;
+      font-family: 'Open Sans', sans-serif;
+      background: #f9f6f2;
       color: #333;
     }
-    #lockscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #f7dfbb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 999;
-    }
-    #main-content {
-      display: none;
-    }
-    input {
-      padding: 0.5rem;
-      margin-top: 1rem;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background: #c8a88f;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
     header {
-      background: #c8a88f;
+      background: #d4c9b3;
       padding: 1rem;
       text-align: center;
-      color: white;
-      font-size: 2rem;
-      border-bottom: 2px solid #f9f2e7;
     }
-    nav {
-      display: flex;
-      justify-content: center;
-      background: #f7dfbb;
-      padding: 0.5rem;
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.5rem;
     }
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #5a3e2b;
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    .container {
-      padding: 2rem;
-      max-width: 800px;
-      margin: auto;
-    }
-    .tree-container {
-      text-align: center;
-      padding: 2rem;
+    .family-section {
+      margin: 2rem;
     }
     .person {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      margin-bottom: 1rem;
       background: #fff;
-      border-radius: 10px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    .person img {
-      max-width: 100px;
-      float: left;
-      margin-right: 1rem;
-      border-radius: 50%;
+    .tree {
+      margin-left: 2rem;
     }
-    .person h3 {
-      margin-top: 0;
+    .editable {
+      border: 1px dashed #aaa;
+      padding: 0.5rem;
+      min-height: 2rem;
     }
-    .tree-img {
-      width: 100%;
-      max-width: 600px;
-      margin-top: 2rem;
+    .image-upload {
+      margin-top: 0.5rem;
     }
   </style>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAa4W3pMKOyUvwaX_PBS-3cMEP6PMvO91s",
+      authDomain: "rodzina-b3182.firebaseapp.com",
+      databaseURL: "https://rodzina-b3182-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "rodzina-b3182",
+      storageBucket: "rodzina-b3182.appspot.com",
+      messagingSenderId: "734164813530",
+      appId: "1:734164813530:web:4a203b313040ad990a47e3",
+      measurementId: "G-VRZGWNBRWK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
+
+    window.saveData = async function(personName) {
+      const text = document.getElementById(`desc-${personName}`).innerText;
+      const imageInput = document.getElementById(`img-${personName}`);
+      let imgURL = "";
+
+      if (imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        const storageRef = sRef(storage, `images/${personName}`);
+        await uploadBytes(storageRef, file);
+        imgURL = await getDownloadURL(storageRef);
+      }
+
+      set(ref(db, 'people/' + personName), {
+        description: text,
+        image: imgURL
+      });
+    }
+
+    window.loadData = async function(personName) {
+      const snapshot = await get(child(ref(db), 'people/' + personName));
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        document.getElementById(`desc-${personName}`).innerText = data.description || "";
+        if (data.image) {
+          const imgEl = document.getElementById(`img-prev-${personName}`);
+          imgEl.src = data.image;
+        }
+      }
+    }
+  </script>
 </head>
 <body>
+  <header>
+    <h1>Rodzina</h1>
+  </header>
 
-  <div id="lockscreen">
-    <h2>Wprowadź hasło, aby uzyskać dostęp:</h2>
-    <input type="password" id="password" placeholder="Hasło..." />
-    <button onclick="checkPassword()">Wejdź</button>
-    <p id="error" style="color: red; display: none;">Nieprawidłowe hasło.</p>
-  </div>
-
-  <div id="main-content">
-    <header>Rodzina2025</header>
-    <nav>
-      <a href="#auleytner" onclick="showFamily('auleytner')">Auleytner</a>
-      <a href="#sadurscy" onclick="showFamily('sadurscy')">Sadurscy</a>
-    </nav>
-    <div class="container">
-      <section id="auleytner" class="tree-container" style="display: none;">
-        <h2>Drzewo genealogiczne rodziny Auleytner</h2>
-        <img class="tree-img" src="https://via.placeholder.com/600x400?text=Drzewo+genealogiczne+Auleytner" alt="Drzewo Auleytner" />
-        <div class="person">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Jan_Sobieski_zwyciezca_pod_Wiedniem.jpg" />
-          <h3>Jan Auleytner</h3>
-          <p>Urodzony w 1890 roku. Legenda rodu. Lubił pierogi i zbierał znaczki.</p>
+  <div class="family-section">
+    <h2>Auleytner</h2>
+    <div class="tree">
+      <div class="person">
+        <strong>Julian Auleytner</strong> + <strong>Irena Auleytner</strong>
+        <div class="tree">
+          <div class="person">Janusz Auleytner + Katarzyna Kurbiel Auleytner
+            <div class="tree">
+              <div class="person">Karolina Auleytner</div>
+              <div class="person">Adam Auleytner</div>
+            </div>
+          </div>
+          <div class="person">Aleksandra Auleytner
+            <div class="tree">
+              <div class="person">Karol Sadurski</div>
+              <div class="person">Klaudia Sadurska</div>
+            </div>
+          </div>
+          <div class="person">Ewa Auleytner</div>
         </div>
-      </section>
-      <section id="sadurscy" class="tree-container" style="display: none;">
-        <h2>Drzewo genealogiczne rodziny Sadurscy</h2>
-        <img class="tree-img" src="https://via.placeholder.com/600x400?text=Drzewo+genealogiczne+Sadurscy" alt="Drzewo Sadurscy" />
-        <div class="person">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Matejko-Batory_pod_Pskowem.jpg" />
-          <h3>Zofia Sadurska</h3>
-          <p>Urodzona w 1902 roku. Prowadziła rodzinne kroniki. Mistrzyni naleśników.</p>
-        </div>
-      </section>
+      </div>
     </div>
   </div>
 
-  <script>
-    function checkPassword() {
-      const input = document.getElementById('password').value;
-      if (input === 'RodzinnaStrona2025') {
-        document.getElementById('lockscreen').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-      } else {
-        document.getElementById('error').style.display = 'block';
-      }
-    }
+  <div class="family-section">
+    <h2>Sadurscy</h2>
+    <div class="tree">
+      <div class="person">
+        <strong>Marian Sadurski</strong> + <strong>Bogumiła Sadurska</strong>
+        <div class="tree">
+          <div class="person">Grzegorz Sadurski
+            <div class="tree">
+              <div class="person">Karol Sadurski</div>
+              <div class="person">Klaudia Sadurska</div>
+              <div class="person">Igor Sadurski
+                <div class="tree">
+                  <div class="person">Jagna Sadurska</div>
+                  <div class="person">Jan Sadurski</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="person">Ala Sadurska</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    function showFamily(family) {
-      document.getElementById('auleytner').style.display = 'none';
-      document.getElementById('sadurscy').style.display = 'none';
-      
-      document.getElementById(family).style.display = 'block';
-    }
-  </script>
+  <div class="family-section">
+    <h2>Dodaj dane do osoby:</h2>
+    <div class="person">
+      <input id="person-name" type="text" placeholder="Imię i nazwisko" /><br />
+      <div contenteditable="true" id="desc-person" class="editable">Wpisz tutaj opis tej osoby...</div>
+      <div class="image-upload">
+        <label>Dodaj zdjęcie:
+          <input type="file" id="img-person" accept="image/*" />
+        </label>
+        <img id="img-prev-person" style="max-width:100px; display:block; margin-top:10px;" />
+      </div>
+      <button onclick="saveData(document.getElementById('person-name').value)">Zapisz</button>
+      <button onclick="loadData(document.getElementById('person-name').value)">Wczytaj</button>
+    </div>
+  </div>
 
 </body>
 </html>
