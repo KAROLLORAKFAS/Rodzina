@@ -31,6 +31,7 @@
       padding: 1rem;
       margin: 1rem 0;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
     }
     .tree {
       margin-left: 2rem;
@@ -42,6 +43,16 @@
     }
     .image-upload {
       margin-top: 0.5rem;
+    }
+    #login-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 999;
     }
   </style>
   <!-- Firebase -->
@@ -94,9 +105,29 @@
         }
       }
     }
+
+    window.openEditor = function(name) {
+      document.getElementById('person-name').value = name;
+      loadData(name);
+    }
+
+    window.checkPassword = function() {
+      const input = document.getElementById("password-input").value;
+      if (input === "RodzinnaStrona2025") {
+        document.getElementById("login-screen").style.display = "none";
+      } else {
+        alert("Błędne hasło");
+      }
+    }
   </script>
 </head>
 <body>
+  <div id="login-screen">
+    <h2>Wprowadź hasło:</h2>
+    <input type="password" id="password-input" />
+    <button onclick="checkPassword()">Wejdź</button>
+  </div>
+
   <header>
     <h1>Rodzina</h1>
   </header>
@@ -104,23 +135,20 @@
   <div class="family-section">
     <h2>Auleytner</h2>
     <div class="tree">
-      <div class="person">
-        <strong>Julian Auleytner</strong> + <strong>Irena Auleytner</strong>
+      <div class="person" onclick="openEditor('Julian Auleytner')"><strong>Julian Auleytner</strong></div>
+      <div class="person" onclick="openEditor('Irena Auleytner')"><strong>Irena Auleytner</strong></div>
+      <div class="tree">
+        <div class="person" onclick="openEditor('Janusz Auleytner')">Janusz Auleytner + Katarzyna Kurbiel-Auleytner</div>
         <div class="tree">
-          <div class="person">Janusz Auleytner + Katarzyna Kurbiel Auleytner
-            <div class="tree">
-              <div class="person">Karolina Auleytner</div>
-              <div class="person">Adam Auleytner</div>
-            </div>
-          </div>
-          <div class="person">Aleksandra Auleytner
-            <div class="tree">
-              <div class="person">Karol Sadurski</div>
-              <div class="person">Klaudia Sadurska</div>
-            </div>
-          </div>
-          <div class="person">Ewa Auleytner</div>
+          <div class="person" onclick="openEditor('Karolina Auleytner')">Karolina Auleytner</div>
+          <div class="person" onclick="openEditor('Adam Auleytner')">Adam Auleytner</div>
         </div>
+        <div class="person" onclick="openEditor('Aleksandra Auleytner')">Aleksandra Auleytner</div>
+        <div class="tree">
+          <div class="person" onclick="openEditor('Karol Sadurski')">Karol Sadurski</div>
+          <div class="person" onclick="openEditor('Klaudia Sadurska')">Klaudia Sadurska</div>
+        </div>
+        <div class="person" onclick="openEditor('Ewa Auleytner')">Ewa Auleytner</div>
       </div>
     </div>
   </div>
@@ -128,29 +156,26 @@
   <div class="family-section">
     <h2>Sadurscy</h2>
     <div class="tree">
-      <div class="person">
-        <strong>Marian Sadurski</strong> + <strong>Bogumiła Sadurska</strong>
+      <div class="person" onclick="openEditor('Marian Sadurski')">Marian Sadurski</div>
+      <div class="person" onclick="openEditor('Bogumiła Sadurska')">Bogumiła Sadurska</div>
+      <div class="tree">
+        <div class="person" onclick="openEditor('Grzegorz Sadurski')">Grzegorz Sadurski</div>
         <div class="tree">
-          <div class="person">Grzegorz Sadurski
-            <div class="tree">
-              <div class="person">Karol Sadurski</div>
-              <div class="person">Klaudia Sadurska</div>
-              <div class="person">Igor Sadurski
-                <div class="tree">
-                  <div class="person">Jagna Sadurska</div>
-                  <div class="person">Jan Sadurski</div>
-                </div>
-              </div>
-            </div>
+          <div class="person" onclick="openEditor('Karol Sadurski')">Karol Sadurski</div>
+          <div class="person" onclick="openEditor('Klaudia Sadurska')">Klaudia Sadurska</div>
+          <div class="person" onclick="openEditor('Igor Sadurski')">Igor Sadurski</div>
+          <div class="tree">
+            <div class="person" onclick="openEditor('Jagna Sadurska')">Jagna Sadurska</div>
+            <div class="person" onclick="openEditor('Jan Sadurski')">Jan Sadurski</div>
           </div>
-          <div class="person">Ala Sadurska</div>
         </div>
+        <div class="person" onclick="openEditor('Ala Sadurska')">Ala Sadurska</div>
       </div>
     </div>
   </div>
 
   <div class="family-section">
-    <h2>Dodaj dane do osoby:</h2>
+    <h2>Edytuj dane osoby:</h2>
     <div class="person">
       <input id="person-name" type="text" placeholder="Imię i nazwisko" /><br />
       <div contenteditable="true" id="desc-person" class="editable">Wpisz tutaj opis tej osoby...</div>
